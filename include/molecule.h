@@ -9,6 +9,7 @@ enum class MoleculeType {
 class Molecule {
 public:
     MoleculeType type;
+
     float m;
     float q;
 

@@ -17,6 +17,10 @@ public:
 
     std::list<Molecule> listNeighboursType(const Cell &, const MoleculeType) const;
     std::list<Molecule> listNeighboursType(const Molecule &) const;
+
+    Grid(const Settings &settings);
+
+    ~Grid();
 };
 
 #endif /* __GRID_H__ */
