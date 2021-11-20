@@ -50,7 +50,14 @@ public:
 
     ~Molecule();
 
-    /* void updateAcceleration(void); */
+    void update(float dt) {
+        unsigned i;
+        for (i = 0; i < 3; ++i) {
+            r[i] += v[i] * dt + a[i] * dt * dt / 2.0f;
+            v[i] += a[i] * dt;
+            a[i] = 0;
+        }
+    }
 };
 
 #endif /* __MOLECULE_H__*/

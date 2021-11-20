@@ -12,12 +12,11 @@ private:
     Settings settings;
 
 public:
-    /* TODO */
-    /*  */ listNeighbours(const Cell &) const;
-    /*  */ listNeighbours(const Molecule &) const;
+    std::list<Molecule> listNeighbours(const Cell &) const;
+    std::list<Molecule> listNeighbours(const Molecule &) const;
 
-    /*  */ listNeighboursType(const Cell &, const MoleculeType) const;
-    /*  */ listNeighboursType(const Molecule &) const;
+    std::list<Molecule> listNeighboursType(const Cell &, const MoleculeType) const;
+    std::list<Molecule> listNeighboursType(const Molecule &) const;
 };
 
 #endif /* __GRID_H__ */
