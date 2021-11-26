@@ -12,3 +12,4 @@ _deps
 build/*
 CMakeLists.txt
 test.cpp
+cmake-build-debug
