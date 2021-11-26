@@ -20,4 +20,13 @@ Grid::Grid(const Settings &settings)
     }
 }
 
+
 Grid::~Grid() {}
+
+void Grid::setup(std::list<Molecule> molecules) {
+    for (auto molecule : molecules) {
+        int id = get_id(molecule.x, molecule.y, molecule.z, settings.y_size, settings.z_size, settings.lattice);
+
+        mesh[id].addMember(molecule);
+    }
+}
