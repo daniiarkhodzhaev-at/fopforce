@@ -8,14 +8,15 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif()
 
 cmake_minimum_required(VERSION 3.17)
-project(DefANTce)
+project(fopforce)
 
 set(CMAKE_CXX_STANDARD 17)
 
 include_directories(include)
 
+add_executable(fopforce test.cpp)
+
 add_compile_options(
   "-Wall;-Wextra;-O2;"
   "$<$<CONFIG:DEBUG>:-O0;-g3;-ggdb;-pg>"
 )
-
