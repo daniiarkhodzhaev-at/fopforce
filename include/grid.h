@@ -3,8 +3,10 @@
 
 #include <cell.h>
 #include <molecule.h>
+#include <settings.h>
 
 #include <vector>
+#include <list>
 
 class Grid {
 private:
@@ -17,6 +19,12 @@ public:
 
     std::list<Molecule> listNeighboursType(const Cell &, const MoleculeType) const;
     std::list<Molecule> listNeighboursType(const Molecule &) const;
+
+    Grid(const Settings &settings);
+
+    void setup(std::list<Molecule> molecules);
+
+    ~Grid();
 };
 
 #endif /* __GRID_H__ */

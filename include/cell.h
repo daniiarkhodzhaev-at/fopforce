@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 class Cell {
-private:
+public:
     std::unordered_multimap<MoleculeType, Molecule> particles;
     union pos {
         struct {
@@ -18,11 +18,12 @@ private:
     };
     float size;
 
-public:
     Cell(float x, float y, float z, float size);
 
     void addMember(const Molecule &);
     void removeMember(const Molecule &);
+
+    bool particleInCell(const Molecule &) const;
 };
 
 #endif /* __CELL_H__ */

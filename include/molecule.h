@@ -1,14 +1,23 @@
 #ifndef __MOLECULE_H__
 #define __MOLECULE_H__
 
+
+#include <settings.h>
+
+#include <vector>
+#include <cmath>
+
+
 enum class MoleculeType {
     INVALID = 0,
     GAS,
 };
 
+
 class Molecule {
 public:
     MoleculeType type;
+
     float m;
     float q;
 
@@ -40,24 +49,20 @@ public:
     Molecule(MoleculeType type, float m, float q,
              float x, float y, float z,
              float vx, float vy, float vz,
-             float ax, float ay, float az,
+             float ax, float ay, float az
             );
 
     Molecule(MoleculeType type, float m, float q,
              float x, float y, float z,
-             float vx, float vy, float vz,
+             float vx, float vy, float vz
             );
 
     ~Molecule();
 
-    void update(float dt) {
-        unsigned i;
-        for (i = 0; i < 3; ++i) {
-            r[i] += v[i] * dt + a[i] * dt * dt / 2.0f;
-            v[i] += a[i] * dt;
-            a[i] = 0;
-        }
-    }
+    int* update(float dt, Settings &settings);
 };
+
+
+std::pair<int, int> get_id(Molecule &molecule, Settings &settings);
 
 #endif /* __MOLECULE_H__*/

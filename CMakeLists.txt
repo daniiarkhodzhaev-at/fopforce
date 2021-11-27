@@ -1,17 +1,34 @@
-cmake_minimum_required(VERSION 3.13)  # CMake version check
-project(fopforce)               # Create project "simple_example"
-set(CMAKE_CXX_STANDARD 14)            # Enable c++14 standard
+if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+  if(NOT DEFINED IN_SOURCE_BUILD)
+    message(FATAL_ERROR
+        "In-source build aren't allowed. Please, remove \"CMakeCache.txt\" and \"CMakeFiles/\" directory."
+        "\n Or define IN_SOURCE_BUILD to force this option (not recommended!)"
+    )
+  endif()
+endif()
 
-# Add main.cpp file of project root directory as source file
-set(SOURCE_FILES src/Display.cpp
-        include/Display.h
-        src/RandomNumberGenerator.cpp
-        include/RandomNumberGenerator.h
-        src/main.cpp)
+cmake_minimum_required(VERSION 3.17)
+project(fopforce)
 
-# Add executable target with source files listed in SOURCE_FILES variable
-add_executable(fopforce ${SOURCE_FILES})
+set(CMAKE_CXX_STANDARD 17)
 
-target_link_libraries(fopforce -lfreeglut -lopengl32 -lglu32)
-#link_directories(${OPENGL_gl_LIBRARY})
-#target_link_libraries(fopforce freeglut glu32 opengl32)
+find_package(GLUT REQUIRED)
+find_package(OpenGL REQUIRED)
+
+include_directories(include)
+include_directories( ${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} )
+
+set(EXEC
+    src/main.cpp
+    src/Display.cpp
+    src/RandomNumberGenerator.cpp
+    )
+
+add_compile_options(
+  "-Wall;-Wextra;-O2;"
+  "$<$<CONFIG:DEBUG>:-O0;-g3;-ggdb;-pg>"
+)
+
+add_executable(fopforce ${EXEC})
+
+target_link_libraries(fopforce ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})

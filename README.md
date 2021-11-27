@@ -1,2 +1,2 @@
 # fopforce
-Rocket plum simulation
+Rocket plume simulation
