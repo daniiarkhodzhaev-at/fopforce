@@ -16,6 +16,7 @@ find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
 
 include_directories(include)
+message(${OPENGL_LIBRARIES})
 include_directories( ${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} )
 
 set(EXEC
@@ -31,4 +32,4 @@ add_compile_options(
 
 add_executable(fopforce ${EXEC})
 
-target_link_libraries(fopforce ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
+target_link_libraries(fopforce ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
