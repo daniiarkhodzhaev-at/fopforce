@@ -1,6 +1,15 @@
 #include "Display.h"
 
 
+void Display::drawParticle(){
+    glPushMatrix();
+    glColor3f(1.0, 1.0, 0.0);
+    glTranslated(0, 0, pos);
+    glutWireSphere(0.04, 5, 5);
+    pos += vel;
+    glPopMatrix();
+}
+
 void Display::reshape(int x, int y){
     if (y == 0 || x == 0) return;
     glMatrixMode(GL_PROJECTION);
@@ -58,19 +67,19 @@ void Display::display(void)
 
     Display::drawAxises();
     Display::drawCone();
-    //drawParticle();
+    drawParticle();
 
     // Flush buffers to screen
 
     glFlush();
     // sawp buffers called because we are using double buffering
-   glutSwapBuffers();
+    glutSwapBuffers();
 }
 
 
-void Display::idle(void)
-{
-    display();
+void Display::timer(int) {
+    glutPostRedisplay();
+    glutTimerFunc(1000/FPS, timer, 0);
 }
 
 void Display::drawCone(){

@@ -1,8 +1,8 @@
 #include <GL/freeglut.h>
 #include <GL/glu.h>
 
-#include <Display.h>
-#include <RandomNumberGenerator.h>
+#include "Display.h"
+#include "RandomNumberGenerator.h"
 
 #include <stdlib.h>
 
@@ -21,7 +21,7 @@ std::vector<Coord> particles;
 std::vector<Coord> velocities;
 
 
-//Display dis;
+
 
 int main (int argc, char **argv)
 {
@@ -54,11 +54,11 @@ int main (int argc, char **argv)
 
     glutDisplayFunc(Display::display);
     glutReshapeFunc(Display::reshape);
-    glutIdleFunc(Display::idle);
 
-    glutSpecialFunc(Display::processSpecialKeys);
+	glutSpecialFunc(Display::processSpecialKeys);
     glutKeyboardFunc(Display::processNormalKeys);
 
+    Display::timer(0);
     glutMainLoop();
     return 0;
 }

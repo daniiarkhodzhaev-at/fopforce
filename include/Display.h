@@ -6,6 +6,11 @@
 
 class Display{
 private:
+    inline static float pos = 0.0f;
+    inline static float vel = 0.05f;
+
+    inline static float FPS = 60;
+
     inline static float camera_phi = 0.0f;
     inline static float camera_z = 0.0f;
 
@@ -21,9 +26,10 @@ public:
     static void processNormalKeys(unsigned char key, int x, int y);
     static void processSpecialKeys(int key, int xx, int yy);
 
-    static void idle(void);
+    static void timer(int);
     static void display(void);
 
     static void drawCone();
     static void drawAxises();
+    static void drawParticle();
 };
