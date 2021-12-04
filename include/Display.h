@@ -6,9 +6,6 @@
 
 class Display{
 private:
-    inline static float pos = 0.0f;
-    inline static float vel = 0.05f;
-
     inline static float FPS = 60;
 
     inline static float camera_phi = 0.0f;

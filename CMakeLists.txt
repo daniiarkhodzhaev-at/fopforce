@@ -20,6 +20,10 @@ message(${OPENGL_LIBRARIES})
 include_directories( ${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} )
 
 set(EXEC
+    src/grid.cpp
+    src/cell.cpp
+    src/molecule.cpp
+    src/settings.cpp
     src/main.cpp
     src/Display.cpp
     src/RandomNumberGenerator.cpp

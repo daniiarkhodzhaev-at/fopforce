@@ -59,10 +59,8 @@ public:
 
     ~Molecule();
 
-    int* update(float dt, Settings &settings);
+    void update(float fps);
 };
 
-
-std::pair<int, int> get_id(Molecule &molecule, Settings &settings);
 
 #endif /* __MOLECULE_H__*/

@@ -1,8 +1,9 @@
 #include <GL/freeglut.h>
 #include <GL/glu.h>
 
-#include "Display.h"
-#include "RandomNumberGenerator.h"
+#include <Display.h>
+#include <RandomNumberGenerator.h>
+#include <grid.h>
 
 #include <stdlib.h>
 
@@ -55,8 +56,11 @@ int main (int argc, char **argv)
     glutDisplayFunc(Display::display);
     glutReshapeFunc(Display::reshape);
 
-	glutSpecialFunc(Display::processSpecialKeys);
+    glutSpecialFunc(Display::processSpecialKeys);
     glutKeyboardFunc(Display::processNormalKeys);
+
+    Grid grid = {Settings()};
+    grid.init();
 
     Display::timer(0);
     glutMainLoop();

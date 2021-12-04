@@ -1,12 +1,11 @@
 #include "Display.h"
 
 
-void Display::drawParticle(){
+void Display::drawParticle(float x, float y, float z){
     glPushMatrix();
     glColor3f(1.0, 1.0, 0.0);
-    glTranslated(0, 0, pos);
+    glTranslated(x, y, z);
     glutWireSphere(0.04, 5, 5);
-    pos += vel;
     glPopMatrix();
 }
 
@@ -23,28 +22,28 @@ void Display::reshape(int x, int y){
 }
 
 void Display::processNormalKeys(unsigned char key, int x, int y) {
-	switch (key) {
-		case 27 :
+    switch (key) {
+        case 27 :
             exit(0);
-			break;
-	}
+            break;
+    }
 }
 
 void Display::processSpecialKeys(int key, int xx, int yy) {
-	switch (key) {
-		case GLUT_KEY_LEFT :
-			camera_phi -= deltaAngle;
-			break;
-		case GLUT_KEY_RIGHT :
-			camera_phi += deltaAngle;
-			break;
+    switch (key) {
+        case GLUT_KEY_LEFT :
+            camera_phi -= deltaAngle;
+            break;
+        case GLUT_KEY_RIGHT :
+            camera_phi += deltaAngle;
+            break;
         case GLUT_KEY_DOWN :
             camera_z -= deltaZ;
             break;
         case GLUT_KEY_UP :
             camera_z += deltaZ;
             break;
-	}
+    }
 }
 
 void Display::display(void)
@@ -56,8 +55,8 @@ void Display::display(void)
     glLoadIdentity();
 
     gluLookAt(  radius*sin(camera_phi), radius*cos(camera_phi), camera_z,
-				0,	0,  0,
-				-1.0f*sin(atan(camera_z / radius))*sin(camera_phi), -1.0f	* sin(atan(camera_z / radius))*cos(camera_phi),  1.0f	* cos(atan(camera_z / radius))	);
+                0,    0,  0,
+                -1.0f*sin(atan(camera_z / radius))*sin(camera_phi), -1.0f    * sin(atan(camera_z / radius))*cos(camera_phi),  1.0f    * cos(atan(camera_z / radius))    );
 
     // traslate the draw by z = -4.0
     // Note this when you decrease z like -8.0 the drawing will looks far , or smaller.
@@ -67,7 +66,12 @@ void Display::display(void)
 
     Display::drawAxises();
     Display::drawCone();
-    drawParticle();
+    for (auto &cell : grid.mesh) {
+        for (auto &[type, molecule] : cell.particles) {
+            drawParticle(molecule.x, molecule.y, molecule.z);
+        }
+    }
+    grid.update(Display::FPS);
 
     // Flush buffers to screen
 

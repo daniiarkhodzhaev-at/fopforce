@@ -11,7 +11,10 @@
 class Grid {
 private:
     std::vector<Cell> mesh;
+    std::vector<Cell> another_mesh;
     Settings settings;
+
+    std::list<Cell *> getCellNeighbours(const int cellPos) const;
 
 public:
     std::list<Molecule> listNeighbours(const Cell &) const;
@@ -22,7 +25,9 @@ public:
 
     Grid(const Settings &settings);
 
-    void setup(std::list<Molecule> molecules);
+    void init();
+
+    void update(float fps);
 
     ~Grid();
 };
