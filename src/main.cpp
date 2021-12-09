@@ -3,7 +3,6 @@
 
 #include <Display.h>
 #include <RandomNumberGenerator.h>
-#include <grid.h>
 
 #include <stdlib.h>
 
@@ -59,9 +58,7 @@ int main (int argc, char **argv)
     glutSpecialFunc(Display::processSpecialKeys);
     glutKeyboardFunc(Display::processNormalKeys);
 
-    Grid grid = {Settings()};
-    grid.init();
-
+    Display::init();
     Display::timer(0);
     glutMainLoop();
     return 0;

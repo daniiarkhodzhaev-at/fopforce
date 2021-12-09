@@ -36,7 +36,7 @@ Molecule::Molecule(MoleculeType type, float m, float q,
 
 Molecule::~Molecule() {}
 
-void update(float fps) {
+void Molecule::update(float fps) {
     unsigned i;
     float dt;
 

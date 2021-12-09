@@ -9,12 +9,14 @@
 #include <list>
 
 class Grid {
-private:
+public:
     std::vector<Cell> mesh;
     std::vector<Cell> another_mesh;
+private:
     Settings settings;
 
-    std::list<Cell *> getCellNeighbours(const int cellPos) const;
+    std::list<Cell *> getCellNeighboursMesh(const int cellPos);
+    std::list<Cell *> getCellNeighboursAnotherMesh(const int cellPos);
 
 public:
     std::list<Molecule> listNeighbours(const Cell &) const;

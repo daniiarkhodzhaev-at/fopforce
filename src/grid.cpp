@@ -2,6 +2,8 @@
 
 #include <RandomNumberGenerator.h>
 
+#include <iostream>
+
 Grid::Grid(const Settings &settings)
     : mesh(), settings(settings)
 {
@@ -29,16 +31,18 @@ void Grid::init() { /* TODO: add initial conditions */
     unsigned N = 10;
     unsigned i, j;
 
+    RandomNumberGenerator rnd;
+
     for (i = 0; i < mesh.size(); ++i) {
         for (j = 0; j < N; ++j) {
             Cell *pCell = &(mesh[i]);
-            pCell->addMember(Molecule(MoleculeType::GAS, 0, 0,
-                             getRandomFloat(pCell->pos.x, pCell->pos.x + pCell->size),
-                             getRandomFloat(pCell->pos.y, pCell->pos.y + pCell->size),
-                             getRandomFloat(pCell->pos.z, pCell->pos.z + pCell->size),
-                             getRandomFloat(0.0f, 0.1f),
-                             getRandomFloat(0.0f, 0.1f),
-                             getRandomFloat(0.0f, 0.1f),));
+            pCell->addMember(Molecule{MoleculeType::GAS, 0, 0,
+                             rnd.getRandomFloat(pCell->pos.x, pCell->pos.x + pCell->size),
+                             rnd.getRandomFloat(pCell->pos.y, pCell->pos.y + pCell->size),
+                             rnd.getRandomFloat(pCell->pos.z, pCell->pos.z + pCell->size),
+                             rnd.getRandomFloat(0.0f, 0.1f),
+                             rnd.getRandomFloat(0.0f, 0.1f),
+                             rnd.getRandomFloat(0.0f, 0.1f),});
         }
     }
 }
@@ -48,12 +52,12 @@ void Grid::update(float fps) {
     for (i = 0; i < mesh.size(); ++i) {
         Cell *pCell = &(mesh[i]);
         for (auto it = pCell->particles.begin(); it != pCell->particles.end(); ++it) {
-            it->update();
+            it->second.update(fps);
             if (!pCell->particleInCell(it->second)) {
                 pCell->removeMember(it);
-                for (auto &cell : getCellNeighboursMesh(i)) {
-                    if (cell.particleInCell(it->second)) {
-                        cell.addMember(it->second);
+                for (auto pCell : getCellNeighboursMesh(i)) {
+                    if (pCell->particleInCell(it->second)) {
+                        pCell->addMember(it->second);
                         break;
                     }
                 }
@@ -65,7 +69,7 @@ void Grid::update(float fps) {
         for (auto it = pCell->particles.begin(); it != pCell->particles.end(); ++it) {
             if (!pCell->particleInCell(it->second)) {
                 pCell->removeMember(it);
-                for (auto &pCell : getCellNeighboursAnotherMesh(i)) {
+                for (auto pCell : getCellNeighboursAnotherMesh(i)) {
                     if (pCell->particleInCell(it->second)) {
                         pCell->addMember(it->second);
                         break;
@@ -80,86 +84,19 @@ std::list<Cell *> Grid::getCellNeighboursMesh(const int cellPos) {
     std::list<Cell *> ans;
     int a = settings.z_size;
     int b = settings.y_size;
+    int i, j, k;
 
-    if (0 < cellPos - 1 < mesh.size()) {
-        ans.insert(&(mesh[cellPos - 1]));
-    }
-    if (0 < cellPos + 1 < mesh.size()) {
-        ans.insert(&(mesh[cellPos + 1]));
-    }
-    if (0 < cellPos - a < mesh.size()) {
-        ans.insert(&(mesh[cellPos - a]));
-    }
-    if (0 < cellPos + a < mesh.size()) {
-        ans.insert(&(mesh[cellPos + a]));
-    }
-    if (0 < cellPos - 1 - a < mesh.size()) {
-        ans.insert(&(mesh[cellPos - 1 - a]));
-    }
-    if (0 < cellPos + 1 - a < mesh.size()) {
-        ans.insert(&(mesh[cellPos + 1 - a]));
-    }
-    if (0 < cellPos - 1 + a < mesh.size()) {
-        ans.insert(&(mesh[cellPos - 1 + a]));
-    }
-    if (0 < cellPos + 1 + a < mesh.size()) {
-        ans.insert(&(mesh[cellPos + 1 + a]));
-    }
-
-    if (0 < cellPos - a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos - a*b]));
-    }
-    if (0 < cellPos - 1 - a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos - 1 - a*b]));
-    }
-    if (0 < cellPos + 1 - a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos + 1 - a*b]));
-    }
-    if (0 < cellPos - a - a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos - a - a*b]));
-    }
-    if (0 < cellPos + a - a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos + a - a*b]));
-    }
-    if (0 < cellPos - 1 - a - a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos - 1 - a - a*b]));
-    }
-    if (0 < cellPos + 1 - a - a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos + 1 - a - a*b]));
-    }
-    if (0 < cellPos - 1 + a - a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos - 1 + a - a*b]));
-    }
-    if (0 < cellPos + 1 + a - a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos + 1 + a - a*b]));
-    }
-
-    if (0 < cellPos + a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos + a*b]));
-    }
-    if (0 < cellPos - 1 + a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos - 1 + a*b]));
-    }
-    if (0 < cellPos + 1 + a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos + 1 + a*b]));
-    }
-    if (0 < cellPos - a + a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos - a + a*b]));
-    }
-    if (0 < cellPos + a + a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos + a + a*b]));
-    }
-    if (0 < cellPos - 1 - a + a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos - 1 - a + a*b]));
-    }
-    if (0 < cellPos + 1 - a + a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos + 1 - a + a*b]));
-    }
-    if (0 < cellPos - 1 + a + a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos - 1 + a + a*b]));
-    }
-    if (0 < cellPos + 1 + a + a*b < mesh.size()) {
-        ans.insert(&(mesh[cellPos + 1 + a + a*b]));
+    for (k = -1; k < 2; ++k) {
+        for (i = -1; i < 2; ++i) {
+            for (j = -1; j < 2; ++j) {
+                if (i == 0 && j == 0 && k == 0) {
+                    continue;
+                }
+                if (0 < cellPos + i + a*j + a*b*k && (unsigned)(cellPos + i + a*j + a*b*k) < mesh.size()) {
+                    ans.push_back(&(mesh[cellPos + i + a*j + a*b*k]));
+                }
+            }
+        }
     }
 
     return ans;
@@ -169,86 +106,19 @@ std::list<Cell *> Grid::getCellNeighboursAnotherMesh(const int cellPos) {
     std::list<Cell *> ans;
     int a = settings.z_size;
     int b = settings.y_size;
+    int i, j, k;
 
-    if (0 < cellPos - 1 < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos - 1]));
-    }
-    if (0 < cellPos + 1 < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos + 1]));
-    }
-    if (0 < cellPos - a < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos - a]));
-    }
-    if (0 < cellPos + a < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos + a]));
-    }
-    if (0 < cellPos - 1 - a < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos - 1 - a]));
-    }
-    if (0 < cellPos + 1 - a < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos + 1 - a]));
-    }
-    if (0 < cellPos - 1 + a < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos - 1 + a]));
-    }
-    if (0 < cellPos + 1 + a < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos + 1 + a]));
-    }
-
-    if (0 < cellPos - a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos - a*b]));
-    }
-    if (0 < cellPos - 1 - a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos - 1 - a*b]));
-    }
-    if (0 < cellPos + 1 - a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos + 1 - a*b]));
-    }
-    if (0 < cellPos - a - a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos - a - a*b]));
-    }
-    if (0 < cellPos + a - a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos + a - a*b]));
-    }
-    if (0 < cellPos - 1 - a - a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos - 1 - a - a*b]));
-    }
-    if (0 < cellPos + 1 - a - a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos + 1 - a - a*b]));
-    }
-    if (0 < cellPos - 1 + a - a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos - 1 + a - a*b]));
-    }
-    if (0 < cellPos + 1 + a - a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos + 1 + a - a*b]));
-    }
-
-    if (0 < cellPos + a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos + a*b]));
-    }
-    if (0 < cellPos - 1 + a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos - 1 + a*b]));
-    }
-    if (0 < cellPos + 1 + a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos + 1 + a*b]));
-    }
-    if (0 < cellPos - a + a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos - a + a*b]));
-    }
-    if (0 < cellPos + a + a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos + a + a*b]));
-    }
-    if (0 < cellPos - 1 - a + a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos - 1 - a + a*b]));
-    }
-    if (0 < cellPos + 1 - a + a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos + 1 - a + a*b]));
-    }
-    if (0 < cellPos - 1 + a + a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos - 1 + a + a*b]));
-    }
-    if (0 < cellPos + 1 + a + a*b < another_mesh.size()) {
-        ans.insert(&(another_mesh[cellPos + 1 + a + a*b]));
+    for (k = -1; k < 2; ++k) {
+        for (i = -1; i < 2; ++i) {
+            for (j = -1; j < 2; ++j) {
+                if (i == 0 && j == 0 && k == 0) {
+                    continue;
+                }
+                if (0 < cellPos + i + a*j + a*b*k && (unsigned)(cellPos + i + a*j + a*b*k) < another_mesh.size()) {
+                    ans.push_back(&(another_mesh[cellPos + i + a*j + a*b*k]));
+                }
+            }
+        }
     }
 
     return ans;

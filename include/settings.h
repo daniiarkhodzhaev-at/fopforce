@@ -4,10 +4,14 @@
 
 class Settings {
 public:
-    int x_size;
-    int y_size;
-    int z_size;
+    unsigned x_size;
+    unsigned y_size;
+    unsigned z_size;
     float lattice;
+
+    Settings();
+
+    ~Settings();
 };
 
 

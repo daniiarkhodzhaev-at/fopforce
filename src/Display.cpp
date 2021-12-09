@@ -1,5 +1,8 @@
 #include "Display.h"
 
+void Display::init() {
+    grid.init();
+}
 
 void Display::drawParticle(float x, float y, float z){
     glPushMatrix();
@@ -21,7 +24,7 @@ void Display::reshape(int x, int y){
     glViewport(0,0,x,y);  //Use the whole window for rendering
 }
 
-void Display::processNormalKeys(unsigned char key, int x, int y) {
+void Display::processNormalKeys(unsigned char key, [[ maybe_unused ]] int x, [[ maybe_unused ]]  int y) {
     switch (key) {
         case 27 :
             exit(0);
@@ -29,7 +32,7 @@ void Display::processNormalKeys(unsigned char key, int x, int y) {
     }
 }
 
-void Display::processSpecialKeys(int key, int xx, int yy) {
+void Display::processSpecialKeys(int key, [[ maybe_unused ]] int xx, [[ maybe_unused ]] int yy) {
     switch (key) {
         case GLUT_KEY_LEFT :
             camera_phi -= deltaAngle;

@@ -4,6 +4,8 @@
 #include <math.h>
 #include <iostream>
 
+#include <grid.h>
+
 class Display{
 private:
     inline static float FPS = 60;
@@ -16,7 +18,10 @@ private:
 
     inline static float radius = 5.0f;
 
+    inline static Grid grid = {Settings(),};
+
 public:
+    static void init();
 
     static void reshape(int x, int y);
 
@@ -28,5 +33,5 @@ public:
 
     static void drawCone();
     static void drawAxises();
-    static void drawParticle();
+    static void drawParticle(float x, float y, float z);
 };
