@@ -8,6 +8,8 @@ Molecule::Molecule(MoleculeType type, float m, float q,
     : type(type)
     , m(m)
     , q(q)
+    , updated(false)
+    , to_del(false)
     , x(x)
     , y(y)
     , z(z)
@@ -22,21 +24,20 @@ Molecule::Molecule(MoleculeType type, float m, float q,
 Molecule::Molecule(MoleculeType type, float m, float q,
              float x, float y, float z,
              float vx, float vy, float vz
-            )
-    : type(type)
-    , m(m)
-    , q(q)
-    , x(x)
-    , y(y)
-    , z(z)
-    , vx(vx)
-    , vy(vy)
-    , vz(vz)
+            ) : Molecule(type, m, q,
+                         x, y, z,
+                         vx, vy, vz,
+                         0, 0, 0)
 {}
 
 Molecule::~Molecule() {}
 
 void Molecule::update(float fps) {
+
+    if (updated) {
+        return;
+    }
+
     unsigned i;
     float dt;
 
@@ -47,4 +48,6 @@ void Molecule::update(float fps) {
         v[i] += a[i] * dt;
         a[i] = 0;
     }
+
+    updated = true;
 }

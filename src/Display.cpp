@@ -71,7 +71,7 @@ void Display::display(void)
     Display::drawCone();
     for (auto &cell : grid.mesh) {
         for (auto &[type, molecule] : cell.particles) {
-            drawParticle(molecule.x, molecule.y, molecule.z);
+            drawParticle(molecule->x, molecule->y, molecule->z);
         }
     }
     grid.update(Display::FPS);

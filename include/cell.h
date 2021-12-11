@@ -3,11 +3,12 @@
 
 #include <molecule.h>
 
-#include <unordered_map>
+#include <map>
 
 class Cell {
 public:
-    std::unordered_multimap<MoleculeType, Molecule> particles;
+    using mol_container = std::multimap<MoleculeType, Molecule *>;
+    mol_container particles;
     /* left-up-smth (the most left in all directions) corner */
     union {
         struct {
@@ -22,10 +23,10 @@ public:
     Cell(float x, float y, float z, float size);
     ~Cell();
 
-    void addMember(const Molecule &);
-    void removeMember(std::unordered_multimap<MoleculeType, Molecule>::iterator);
+    void addMember(Molecule *);
+    void removeMember(mol_container::iterator);
 
-    bool particleInCell(const Molecule &) const;
+    bool particleInCell(Molecule *) const;
 };
 
 #endif /* __CELL_H__ */

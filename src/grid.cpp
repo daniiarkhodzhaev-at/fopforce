@@ -25,26 +25,69 @@ Grid::Grid(const Settings &settings)
 }
 
 
-Grid::~Grid() {}
+Grid::~Grid() {
+    for (Molecule *tmp : molecules_pull) {
+        delete tmp;
+    }
+}
 
 void Grid::init() { /* TODO: add initial conditions */
     unsigned N = 10;
     unsigned i, j;
+    Molecule *tmp;
+    Cell *pCell;
+    std::pair<int, int> cellIds;
 
     RandomNumberGenerator rnd;
 
     for (i = 0; i < mesh.size(); ++i) {
         for (j = 0; j < N; ++j) {
-            Cell *pCell = &(mesh[i]);
-            pCell->addMember(Molecule{MoleculeType::GAS, 0, 0,
-                             rnd.getRandomFloat(pCell->pos.x, pCell->pos.x + pCell->size),
-                             rnd.getRandomFloat(pCell->pos.y, pCell->pos.y + pCell->size),
-                             rnd.getRandomFloat(pCell->pos.z, pCell->pos.z + pCell->size),
-                             rnd.getRandomFloat(0.0f, 0.1f),
-                             rnd.getRandomFloat(0.0f, 0.1f),
-                             rnd.getRandomFloat(0.0f, 0.1f),});
+            pCell =&(mesh[i]);
+            tmp = new Molecule(MoleculeType::GAS, 0, 0,
+                               rnd.getRandomFloat(pCell->pos.x, pCell->pos.x + pCell->size),
+                               rnd.getRandomFloat(pCell->pos.y, pCell->pos.y + pCell->size),
+                               rnd.getRandomFloat(pCell->pos.z, pCell->pos.z + pCell->size),
+                               rnd.getRandomFloat(0.0f, 0.1f),
+                               rnd.getRandomFloat(0.0f, 0.1f),
+                               rnd.getRandomFloat(0.0f, 0.1f));
+            cellIds = getId(*tmp);
+            molecules_pull.push_back(tmp);
+            if (cellIds.first != -1) {
+                mesh[cellIds.first].addMember(tmp);
+            }
+            if (cellIds.second != -1) {
+                another_mesh[cellIds.second].addMember(tmp);
+            }
         }
     }
+}
+
+std::pair<int, int> Grid::getId(const Molecule &molecule) {
+    std::pair<int, int> res;
+    float x, y, z, scale;
+    int y_size, z_size,
+        i_x, i_y, i_z, n, k;
+
+    x = molecule.x;
+    y = molecule.y;
+    z = molecule.z;
+    y_size = settings.y_size;
+    z_size = settings.z_size;
+    scale = settings.lattice;
+
+    i_x = static_cast<int>(std::floor(x / scale));
+    i_y = static_cast<int>(std::floor(y / scale));
+    i_z = static_cast<int>(std::floor(z / scale));
+    n = i_x * y_size * z_size + i_y * z_size + i_z;
+
+    i_x = static_cast<int>(std::floor(x / scale - 0.5f));
+    i_y = static_cast<int>(std::floor(y / scale - 0.5f));
+    i_z = static_cast<int>(std::floor(z / scale - 0.5f));
+    k =  i_x * y_size * z_size + i_y * z_size + i_z;
+
+    res = std::make_pair(n >= 0 ? n : -1, k >= 0 ? k : -1);
+
+    return res;
 }
 
 void Grid::update(float fps) {
@@ -52,74 +95,32 @@ void Grid::update(float fps) {
     for (i = 0; i < mesh.size(); ++i) {
         Cell *pCell = &(mesh[i]);
         for (auto it = pCell->particles.begin(); it != pCell->particles.end(); ++it) {
-            it->second.update(fps);
+            it->second->update(fps);
             if (!pCell->particleInCell(it->second)) {
-                pCell->removeMember(it);
-                for (auto pCell : getCellNeighboursMesh(i)) {
-                    if (pCell->particleInCell(it->second)) {
-                        pCell->addMember(it->second);
-                        break;
-                    }
+                it->second->to_del = true;
+                auto cellIds = getId(*(it->second));
+                if (cellIds.first != -1) {
+                    mesh[i].addMember(it->second);
                 }
             }
         }
+        std::erase_if(pCell->particles, [](const auto &data) { return data.second->to_del; });
     }
     for (i = 0; i < another_mesh.size(); ++i) {
         Cell *pCell = &(another_mesh[i]);
         for (auto it = pCell->particles.begin(); it != pCell->particles.end(); ++it) {
+            it->second->update(fps);
             if (!pCell->particleInCell(it->second)) {
-                pCell->removeMember(it);
-                for (auto pCell : getCellNeighboursAnotherMesh(i)) {
-                    if (pCell->particleInCell(it->second)) {
-                        pCell->addMember(it->second);
-                        break;
-                    }
+                it->second->to_del = true;
+                auto cellIds = getId(*(it->second));
+                if (cellIds.second != -1) {
+                    another_mesh[i].addMember(it->second);
                 }
             }
         }
+        std::erase_if(pCell->particles, [](const auto &data) { return data.second->to_del; });
     }
-}
-
-std::list<Cell *> Grid::getCellNeighboursMesh(const int cellPos) {
-    std::list<Cell *> ans;
-    int a = settings.z_size;
-    int b = settings.y_size;
-    int i, j, k;
-
-    for (k = -1; k < 2; ++k) {
-        for (i = -1; i < 2; ++i) {
-            for (j = -1; j < 2; ++j) {
-                if (i == 0 && j == 0 && k == 0) {
-                    continue;
-                }
-                if (0 < cellPos + i + a*j + a*b*k && (unsigned)(cellPos + i + a*j + a*b*k) < mesh.size()) {
-                    ans.push_back(&(mesh[cellPos + i + a*j + a*b*k]));
-                }
-            }
-        }
+    for (auto pMol : molecules_pull) {
+        pMol->updated = false;
     }
-
-    return ans;
-}
-
-std::list<Cell *> Grid::getCellNeighboursAnotherMesh(const int cellPos) {
-    std::list<Cell *> ans;
-    int a = settings.z_size;
-    int b = settings.y_size;
-    int i, j, k;
-
-    for (k = -1; k < 2; ++k) {
-        for (i = -1; i < 2; ++i) {
-            for (j = -1; j < 2; ++j) {
-                if (i == 0 && j == 0 && k == 0) {
-                    continue;
-                }
-                if (0 < cellPos + i + a*j + a*b*k && (unsigned)(cellPos + i + a*j + a*b*k) < another_mesh.size()) {
-                    ans.push_back(&(another_mesh[cellPos + i + a*j + a*b*k]));
-                }
-            }
-        }
-    }
-
-    return ans;
 }

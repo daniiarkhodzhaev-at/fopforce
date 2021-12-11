@@ -10,7 +10,7 @@ endif()
 cmake_minimum_required(VERSION 3.17)
 project(fopforce)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)

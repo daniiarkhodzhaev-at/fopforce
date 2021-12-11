@@ -7,18 +7,18 @@ Cell::Cell(float x, float y, float z, float size)
 
 Cell::~Cell() {}
 
-void Cell::addMember(const Molecule &molecule) {
-    particles.insert({molecule.type, molecule});
+void Cell::addMember(Molecule *pMolecule) {
+    particles.insert({pMolecule->type, pMolecule});
 }
 
-void Cell::removeMember(std::unordered_multimap<MoleculeType, Molecule>::iterator it) {
+void Cell::removeMember(Cell::mol_container::iterator it) {
     particles.erase(it);
 }
 
-bool Cell::particleInCell(const Molecule &molecule) const {
+bool Cell::particleInCell(Molecule *molecule) const {
     return (
-                (pos.x < molecule.x && molecule.x < pos.x + size) &&
-                (pos.y < molecule.y && molecule.y < pos.y + size) &&
-                (pos.z < molecule.z && molecule.z < pos.z + size)
+                (pos.x < molecule->x && molecule->x < pos.x + size) &&
+                (pos.y < molecule->y && molecule->y < pos.y + size) &&
+                (pos.z < molecule->z && molecule->z < pos.z + size)
             );
 }

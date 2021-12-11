@@ -21,6 +21,9 @@ public:
     float m;
     float q;
 
+    bool updated;
+    bool to_del;
+
     union {
         struct {
             float x;
