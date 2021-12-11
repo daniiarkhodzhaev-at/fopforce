@@ -10,9 +10,10 @@
 
 class Grid {
 public:
-    std::vector<Cell> mesh;
-    std::vector<Cell> another_mesh;
+    std::vector<Cell *> mesh;
+    std::vector<Cell *> another_mesh;
 private:
+    std::vector<Cell *> molecule_pull;
     Settings settings;
 
     std::list<Cell *> getCellNeighboursMesh(const int cellPos);
