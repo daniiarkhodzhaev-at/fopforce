@@ -95,12 +95,14 @@ void Grid::update(float fps) {
     for (i = 0; i < mesh.size(); ++i) {
         Cell *pCell = &(mesh[i]);
         for (auto it = pCell->particles.begin(); it != pCell->particles.end(); ++it) {
-            it->second->update(fps);
-            if (!pCell->particleInCell(it->second)) {
-                it->second->to_del = true;
-                auto cellIds = getId(*(it->second));
-                if (cellIds.first != -1) {
-                    mesh[i].addMember(it->second);
+            if (!it->second->updated) {
+                it->second->update(fps);
+                if (!pCell->particleInCell(it->second)) {
+                    it->second->to_del = true;
+                    auto cellIds = getId(*(it->second));
+                    if (cellIds.first != -1) {
+                        mesh[i].addMember(it->second);
+                    }
                 }
             }
         }
@@ -109,12 +111,14 @@ void Grid::update(float fps) {
     for (i = 0; i < another_mesh.size(); ++i) {
         Cell *pCell = &(another_mesh[i]);
         for (auto it = pCell->particles.begin(); it != pCell->particles.end(); ++it) {
-            it->second->update(fps);
-            if (!pCell->particleInCell(it->second)) {
-                it->second->to_del = true;
-                auto cellIds = getId(*(it->second));
-                if (cellIds.second != -1) {
-                    another_mesh[i].addMember(it->second);
+            if (!it->second->updated) {
+                it->second->update(fps);
+                if (!pCell->particleInCell(it->second)) {
+                    it->second->to_del = true;
+                    auto cellIds = getId(*(it->second));
+                    if (cellIds.second != -1) {
+                        another_mesh[i].addMember(it->second);
+                    }
                 }
             }
         }
