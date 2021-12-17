@@ -8,7 +8,7 @@ void Display::drawParticle(float x, float y, float z){
     glPushMatrix();
     glColor3f(1.0, 1.0, 0.0);
     glTranslated(x, y, z);
-    glutWireSphere(0.04, 5, 5);
+    glutSolidCube(0.04);
     glPopMatrix();
 }
 
