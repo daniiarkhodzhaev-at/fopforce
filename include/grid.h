@@ -5,6 +5,7 @@
 #include <molecule.h>
 #include <settings.h>
 
+#include <tuple>
 #include <vector>
 #include <list>
 
@@ -31,6 +32,8 @@ public:
     void init();
 
     void update(float fps);
+
+    std::tuple<float, float, float> getOffsets() const;
 
     std::pair<int, int> getId(const Molecule &);
 

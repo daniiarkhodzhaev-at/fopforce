@@ -62,6 +62,12 @@ void Grid::init() { /* TODO: add initial conditions */
     }
 }
 
+std::tuple<float, float, float> Grid::getOffsets() const {
+    return std::make_tuple(settings.x_size * settings.lattice * 0.5f,
+                           settings.y_size * settings.lattice * 0.5f,
+                           settings.z_size * settings.lattice * 0.5f);
+}
+
 std::pair<int, int> Grid::getId(const Molecule &molecule) {
     std::pair<int, int> res;
     float x, y, z, scale;
@@ -78,14 +84,14 @@ std::pair<int, int> Grid::getId(const Molecule &molecule) {
     i_x = static_cast<int>(std::floor(x / scale));
     i_y = static_cast<int>(std::floor(y / scale));
     i_z = static_cast<int>(std::floor(z / scale));
-    n = i_x * y_size * z_size + i_y * z_size + i_z;
+    n = i_x * (int)y_size * (int)z_size + i_y * (int)z_size + i_z;
 
     i_x = static_cast<int>(std::floor(x / scale - 0.5f));
     i_y = static_cast<int>(std::floor(y / scale - 0.5f));
     i_z = static_cast<int>(std::floor(z / scale - 0.5f));
-    k =  i_x * y_size * z_size + i_y * z_size + i_z;
+    k =  i_x * (int)y_size * (int)z_size + i_y * (int)z_size + i_z;
 
-    res = std::make_pair(n >= 0 ? n : -1, k >= 0 ? k : -1);
+    res = std::make_pair((n >= 0 && (unsigned)n < mesh.size()) ? n : -1, (k >= 0 && (unsigned)k < mesh.size()) ? k : -1);
 
     return res;
 }
@@ -101,12 +107,15 @@ void Grid::update(float fps) {
                     it->second->to_del = true;
                     auto cellIds = getId(*(it->second));
                     if (cellIds.first != -1) {
-                        mesh[i].addMember(it->second);
+                        mesh[cellIds.first].addMember(it->second);
                     }
                 }
             }
         }
         std::erase_if(pCell->particles, [](const auto &data) { return data.second->to_del; });
+    }
+    for (auto pMol : molecules_pull) {
+        pMol->to_del = false;
     }
     for (i = 0; i < another_mesh.size(); ++i) {
         Cell *pCell = &(another_mesh[i]);
@@ -117,7 +126,7 @@ void Grid::update(float fps) {
                     it->second->to_del = true;
                     auto cellIds = getId(*(it->second));
                     if (cellIds.second != -1) {
-                        another_mesh[i].addMember(it->second);
+                        another_mesh[cellIds.second].addMember(it->second);
                     }
                 }
             }
@@ -126,5 +135,6 @@ void Grid::update(float fps) {
     }
     for (auto pMol : molecules_pull) {
         pMol->updated = false;
+        pMol->to_del = false;
     }
 }

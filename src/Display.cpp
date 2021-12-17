@@ -69,9 +69,12 @@ void Display::display(void)
 
     Display::drawAxises();
     Display::drawCone();
+    auto offsets = grid.getOffsets();
     for (auto &cell : grid.mesh) {
         for (auto &[type, molecule] : cell.particles) {
-            drawParticle(molecule->x, molecule->y, molecule->z);
+            drawParticle(molecule->x - std::get<0>(offsets),
+                         molecule->y - std::get<1>(offsets),
+                         molecule->z - std::get<2>(offsets));
         }
     }
     grid.update(Display::FPS);
