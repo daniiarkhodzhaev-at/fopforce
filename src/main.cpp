@@ -2,54 +2,17 @@
 #include <GL/glu.h>
 
 #include "Display.h"
-#include "RandomNumberGenerator.h"
 
 #include <stdlib.h>
 
-#include <vector>
-
-void display(void);
-void reshape(int x, int y);
-void display_cone(void);
-
-struct Coord{
-    float x, y, z;
-};
-
-int N = 10000;
-std::vector<Coord> particles;
-std::vector<Coord> velocities;
-
-
-
-
 int main (int argc, char **argv)
 {
-
-    /*
-    Coord c;
-    Coord v;
-    RandomNumberGenerator rnd;
-    particles.reserve(N);
-    velocities.reserve(N);
-    float c_max = 0; //0.01f;
-    float v_max = 0.001f;
-    for (int i = 0; i < N; ++i){
-        c.x = rnd.getRandomFloat(-c_max, c_max);
-        c.y = rnd.getRandomFloat(-c_max, c_max);
-        c.z = rnd.getRandomFloat(-c_max, c_max);
-
-        v.x = rnd.getRandomFloat(-v_max*10, v_max*10);
-        v.y = rnd.getRandomFloat(-v_max*10, v_max*10);
-        v.z = rnd.getRandomFloat(-v_max, 0);
-        particles.push_back(c);
-        velocities.push_back(v);
-    }
-    */
+    int N = 50000;
+    Display* d = new Display(N);
 
     glutInit(&argc, argv);
-    glutInitWindowSize(350,350);
-    glutCreateWindow("Solid Sphere");
+    glutInitWindowSize(550,550);
+    glutCreateWindow("Modeling");
 
 
     glutDisplayFunc(Display::display);

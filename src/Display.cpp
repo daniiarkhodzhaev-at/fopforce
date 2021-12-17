@@ -1,12 +1,39 @@
 #include "Display.h"
 
 
+Display::Display(int Num){
+    N = Num;
+    Coord c;
+    Coord v;
+
+    RandomNumberGenerator rnd;
+    particles.reserve(N);
+    velocities.reserve(N);
+    float c_max = 0; //0.01f;
+    float v_max = 0.00001f;
+    for (int i = 0; i < N; ++i){
+        c.x = rnd.getRandomFloat(-c_max, c_max);
+        c.y = rnd.getRandomFloat(-c_max, c_max);
+        c.z = rnd.getRandomFloat(-c_max, c_max);
+
+        v.x = rnd.getRandomFloat(-v_max*10, v_max*10);
+        v.y = rnd.getRandomFloat(-v_max*10, v_max*10);
+        v.z = rnd.getRandomFloat(-v_max, 0);
+        particles.push_back(c);
+        velocities.push_back(v);
+    }
+}
+
 void Display::drawParticle(){
     glPushMatrix();
     glColor3f(1.0, 1.0, 0.0);
-    glTranslated(0, 0, pos);
-    glutWireSphere(0.04, 5, 5);
-    pos += vel;
+    for (int i = 0; i < N; ++i){
+        glTranslated(particles[i].x, particles[i].y, particles[i].z);
+        glutSolidCube(0.04);
+        particles[i].x += velocities[i].x;
+        particles[i].y += velocities[i].y;
+        particles[i].z += velocities[i].z;
+    }
     glPopMatrix();
 }
 
@@ -67,7 +94,7 @@ void Display::display(void)
 
     Display::drawAxises();
     Display::drawCone();
-    drawParticle();
+    Display::drawParticle();
 
     // Flush buffers to screen
 
