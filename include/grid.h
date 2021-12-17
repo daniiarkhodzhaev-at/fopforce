@@ -5,13 +5,20 @@
 #include <molecule.h>
 #include <settings.h>
 
+#include <tuple>
 #include <vector>
 #include <list>
 
 class Grid {
-private:
+public:
     std::vector<Cell> mesh;
+    std::vector<Cell> another_mesh;
+private:
     Settings settings;
+    std::vector<Molecule *> molecules_pull;
+
+    std::list<Cell *> getCellNeighboursMesh(const int cellPos);
+    std::list<Cell *> getCellNeighboursAnotherMesh(const int cellPos);
 
 public:
     std::list<Molecule> listNeighbours(const Cell &) const;
@@ -22,7 +29,13 @@ public:
 
     Grid(const Settings &settings);
 
-    void setup(std::list<Molecule> molecules);
+    void init();
+
+    void update(float fps);
+
+    std::tuple<float, float, float> getOffsets() const;
+
+    std::pair<int, int> getId(const Molecule &);
 
     ~Grid();
 };

@@ -10,13 +10,30 @@ endif()
 cmake_minimum_required(VERSION 3.17)
 project(fopforce)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
+
+find_package(GLUT REQUIRED)
+find_package(OpenGL REQUIRED)
 
 include_directories(include)
+message(${OPENGL_LIBRARIES})
+include_directories( ${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} )
 
-add_executable(fopforce test.cpp)
+set(EXEC
+    src/settings.cpp
+    src/molecule.cpp
+    src/cell.cpp
+    src/grid.cpp
+    src/main.cpp
+    src/Display.cpp
+    src/RandomNumberGenerator.cpp
+    )
 
 add_compile_options(
   "-Wall;-Wextra;-O2;"
   "$<$<CONFIG:DEBUG>:-O0;-g3;-ggdb;-pg>"
 )
+
+add_executable(fopforce ${EXEC})
+
+target_link_libraries(fopforce ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
