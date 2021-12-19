@@ -68,7 +68,7 @@ std::tuple<float, float, float> Grid::getOffsets() const {
                            settings.z_size * settings.lattice * 0.5f);
 }
 
-std::pair<int, int> Grid::getId(const Molecule &molecule) {
+std::pair<int, int> Grid::getId(const Molecule &molecule) const {
     std::pair<int, int> res;
     float x, y, z, scale;
     int y_size, z_size,
@@ -114,9 +114,11 @@ void Grid::update(float fps) {
         }
         std::erase_if(pCell->particles, [](const auto &data) { return data.second->to_del; });
     }
+
     for (auto pMol : molecules_pull) {
         pMol->to_del = false;
     }
+
     for (i = 0; i < another_mesh.size(); ++i) {
         Cell *pCell = &(another_mesh[i]);
         for (auto it = pCell->particles.begin(); it != pCell->particles.end(); ++it) {
@@ -133,6 +135,7 @@ void Grid::update(float fps) {
         }
         std::erase_if(pCell->particles, [](const auto &data) { return data.second->to_del; });
     }
+
     for (auto pMol : molecules_pull) {
         pMol->updated = false;
         pMol->to_del = false;

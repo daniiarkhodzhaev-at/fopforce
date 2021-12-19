@@ -18,7 +18,7 @@ public:
         };
         float r[3];
     } pos;
-    float size;
+    const float size;
 
     Cell(float x, float y, float z, float size);
     ~Cell();
