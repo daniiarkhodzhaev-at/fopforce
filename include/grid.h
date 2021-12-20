@@ -14,7 +14,7 @@ public:
     std::vector<Cell> mesh;
     std::vector<Cell> another_mesh;
 private:
-    Settings settings;
+    const Settings settings;
     std::vector<Molecule *> molecules_pull;
 
     std::list<Cell *> getCellNeighboursMesh(const int cellPos);
@@ -35,7 +35,7 @@ public:
 
     std::tuple<float, float, float> getOffsets() const;
 
-    std::pair<int, int> getId(const Molecule &);
+    std::pair<int, int> getId(const Molecule &) const;
 
     ~Grid();
 };

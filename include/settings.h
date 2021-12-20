@@ -4,10 +4,10 @@
 
 class Settings {
 public:
-    unsigned x_size;
-    unsigned y_size;
-    unsigned z_size;
-    float lattice;
+    const unsigned x_size;
+    const unsigned y_size;
+    const unsigned z_size;
+    const float lattice;
 
     Settings();
 
